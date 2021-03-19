@@ -6,6 +6,7 @@ import {
 import './App.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Movies from './pages/Movies';
 
 function App() {
     const theme = createMuiTheme({
@@ -22,6 +23,9 @@ function App() {
                     <Switch>
                         <Route path="/login">
                             <Login />
+                        </Route>
+                        <Route path="/movies">
+                            <Movies />
                         </Route>
                         <Route exact path="/">
                             <Home />

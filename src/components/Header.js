@@ -1,7 +1,6 @@
-import { AppBar, IconButton, Link, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Link, Toolbar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -17,23 +16,34 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header() {
     const classes = useStyles();
+    const history = useHistory();
+    const isLoginPage = window.location.pathname === '/login';
+    const isAuthenticated = sessionStorage.getItem('token');
+
+    const logout = () => {
+        sessionStorage.removeItem('token');
+        history.push('/');
+    }
 
     return (
         <AppBar position="static">
             <Toolbar>
-                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                    <MenuIcon />
-                </IconButton>
-                <Typography variant="h6" className={classes.title}>
+                <Typography variant="h6" className={classes.title} align="left">
                     IMDB
                 </Typography>
-                <Link
+                {!(isLoginPage || isAuthenticated) && <Link
                     component={RouterLink}
                     to="/login"
                     color="inherit"
                 >
                     Login
-                </Link>
+                </Link>}
+                {isAuthenticated && <Link
+                    onClick={logout}
+                    color="inherit"
+                >
+                    Logout
+                </Link>}
             </Toolbar>
         </AppBar>
     );

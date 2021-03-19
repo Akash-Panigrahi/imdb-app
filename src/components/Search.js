@@ -19,7 +19,9 @@ export default function Search({ search, handleSearchChange }) {
             autoComplete="off"
             onSubmit={handleSubmit}
         >
-            <TextField variant="outlined" inputRef={searchRef} defaultValue={search} />
+            <Box mr={2}>
+                <TextField placeholder="Movie or director name..." size="small" variant="outlined" inputRef={searchRef} defaultValue={search} />
+            </Box>
             <Button variant="contained" color="primary" type="submit">
                 Search
             </Button>

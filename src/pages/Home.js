@@ -83,11 +83,13 @@ export default function Home() {
 
     return (
         <Layout>
-            <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={4}>
                 <Search search={search} handleSearchChange={handleSearchChange} />
                 <SortFilter sortBy={sortBy} handleSortChange={handleSortChange} orderBy={orderBy} handleOrderChange={handleOrderChange} />
             </Box>
-            <GenreList genres={genres} addGenre={addGenre} removeGenre={removeGenre} />
+            <Box mb={4}>
+                <GenreList genres={genres} addGenre={addGenre} removeGenre={removeGenre} />
+            </Box>
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Pagination count={totalPages} page={page} onChange={handlePageChange} />
             </Box>

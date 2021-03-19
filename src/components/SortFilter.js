@@ -16,10 +16,12 @@ export default function SortFilter({ sortBy, handleSortChange, orderBy, handleOr
 
     return (
         <Box display="flex" alignItems="center" justifyContent="center">
-            <Typography variant="h5" component="span">
-                Sort By
-            </Typography>
-            <FormControl variant="outlined" className={classes.formControl}>
+            <Box mr={2}>
+                <Typography variant="h6" component="span">
+                    Sort By
+                </Typography>
+            </Box>
+            <FormControl variant="outlined" className={classes.formControl} size="small">
                 <Select
                     value={sortBy}
                     onChange={handleSortChange}
@@ -29,7 +31,7 @@ export default function SortFilter({ sortBy, handleSortChange, orderBy, handleOr
                     <MenuItem value="name">Movie</MenuItem>
                 </Select>
             </FormControl>
-            <FormControl variant="outlined" className={classes.formControl}>
+            <FormControl variant="outlined" className={classes.formControl} size="small">
                 <Select
                     value={orderBy}
                     onChange={handleOrderChange}
