@@ -1,7 +1,10 @@
-import React from 'react'
+import { Box } from '@material-ui/core';
+import Copyright from './Copyright';
 
 export default function Footer() {
     return (
-        <footer>Copyright &copy; IMDB, Inc. All rights reserved.</footer>
+        <Box mt={8} component="footer">
+            <Copyright />
+        </Box>
     )
 }

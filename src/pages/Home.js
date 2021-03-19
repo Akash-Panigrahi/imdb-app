@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
-import { Pagination } from '@material-ui/lab';
-
-import Header from "../components/Header";
-import Footer from '../components/Footer';
-import GenreList from "../components/GenreList";
-import MovieList from "../components/MovieList";
-import SortFilter from "../components/SortFilter";
 import { Box } from "@material-ui/core";
+import { Pagination } from '@material-ui/lab';
+import { useEffect, useState } from "react";
+import GenreList from "../components/GenreList";
+import Layout from "../components/Layout";
+import MovieList from "../components/MovieList";
 import Search from "../components/Search";
+import SortFilter from "../components/SortFilter";
 
 export default function Home() {
     const [movies, setMovies] = useState([]);
@@ -84,8 +82,7 @@ export default function Home() {
     }
 
     return (
-        <>
-            <Header />
+        <Layout>
             <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Search search={search} handleSearchChange={handleSearchChange} />
                 <SortFilter sortBy={sortBy} handleSortChange={handleSortChange} orderBy={orderBy} handleOrderChange={handleOrderChange} />
@@ -98,7 +95,6 @@ export default function Home() {
             <Box display="flex" alignItems="center" justifyContent="center">
                 <Pagination count={totalPages} page={page} onChange={handlePageChange} />
             </Box>
-            <Footer />
-        </>
+        </Layout>
     )
 }
