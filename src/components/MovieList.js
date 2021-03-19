@@ -44,7 +44,7 @@ export default function MovieList({ movies }) {
                                 {movie.director}
                             </Typography>
                             <div className={classes.genres}>
-                                {movie.genre.map(genre => <Chip className={classes.genre} key={genre} label={genre} />)}
+                                {movie.genres.map(genre => <Chip className={classes.genre} key={genre} label={genre} />)}
                             </div>
                         </CardContent>
                     </Card>
