@@ -10,6 +10,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { Add, Delete, Edit } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
+import DeleteMovieConfirmationDialog from '../components/DeleteMovieConfirmationDialog';
 import Layout from '../components/Layout';
 
 const headCells = [
@@ -51,6 +52,9 @@ export default function Movies() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [movieToDelete, setMovieToDelete] = useState({});
+    const [forceUpdate, setForceUpdate] = useState(0);
 
     useEffect(() => {
         const url = new URL(process.env.REACT_APP_BASE_URL + '/movie');
@@ -66,7 +70,7 @@ export default function Movies() {
                 setMovies(data.movies);
                 setTotalPages(data.totalMovies);
             });
-    }, [page, rowsPerPage]);
+    }, [page, rowsPerPage, forceUpdate]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -75,6 +79,34 @@ export default function Movies() {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(event.target.value);
         setPage(0);
+    };
+
+    const handleMovieDelete = (deleteMovie) => {
+        setMovieToDelete(deleteMovie);
+        setShowDeleteDialog(true);
+    }
+
+    const deleteMovie = (movie) => {
+        fetch(process.env.REACT_APP_BASE_URL + '/movie/' + movie._id, {
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${sessionStorage.getItem('token')}`
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                setShowDeleteDialog(false);
+                setForceUpdate(forceUpdate + 1);
+            })
+            .catch(error => {
+                console.error(error);
+                setShowDeleteDialog(false);
+            });
+    };
+
+    const closeDeleteDialog = () => {
+        setShowDeleteDialog(false);
     };
 
     return (
@@ -127,7 +159,7 @@ export default function Movies() {
                                                 <IconButton size="small" color="primary">
                                                     <Edit />
                                                 </IconButton>
-                                                <IconButton size="small" color="secondary">
+                                                <IconButton size="small" color="secondary" onClick={() => handleMovieDelete(row)}>
                                                     <Delete />
                                                 </IconButton>
                                             </TableCell>
@@ -148,6 +180,9 @@ export default function Movies() {
                     />
                 </Paper>
             </div>
+
+            {/* Dialog */}
+            {showDeleteDialog && <DeleteMovieConfirmationDialog movie={movieToDelete} deleteMovie={deleteMovie} closeDeleteDialog={closeDeleteDialog} />}
         </Layout>
     )
 }
