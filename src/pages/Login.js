@@ -144,7 +144,10 @@ export default function Login() {
               color="primary"
               className={classes.submit}
               disabled={Boolean(
-                loginForm.email.error && loginForm.password.error
+                !loginForm.email.value ||
+                  !loginForm.password.value ||
+                  loginForm.email.error ||
+                  loginForm.password.error
               )}
             >
               Log In

@@ -12,22 +12,16 @@ export default function Home() {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [genres, setGenres] = useState([]);
   const [sortBy, setSortBy] = useState("name");
   const [orderBy, setOrderBy] = useState("asc");
   const [search, setSearch] = useState("");
+  const [genres, setGenres] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState(new Set());
 
   useEffect(() => {
     fetch(environment.baseUrl + "/genre")
       .then((res) => res.json())
-      .then((data) =>
-        setGenres(
-          data.map((genre) => {
-            genre.selected = false;
-            return genre;
-          })
-        )
-      );
+      .then((data) => setGenres(data.map((genre) => genre.name)));
   }, []);
 
   useEffect(() => {
@@ -37,10 +31,7 @@ export default function Home() {
       sortBy,
       orderBy,
       search,
-      genres: genres
-        .filter((genre) => genre.selected)
-        .map((genre) => genre.name)
-        .join(),
+      genres: Array.from(selectedGenres),
     };
     url.search = new URLSearchParams(reqData).toString();
 
@@ -53,7 +44,7 @@ export default function Home() {
         // default length is 20
         setTotalPages(Math.ceil(data.totalMovies / 20));
       });
-  }, [page, sortBy, orderBy, search, genres]);
+  }, [page, sortBy, orderBy, search, selectedGenres]);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -73,25 +64,13 @@ export default function Home() {
 
   const addGenre = (genreName) => {
     setPage(1);
-    setGenres(
-      genres.map((genre) => {
-        if (genre.name === genreName) {
-          genre.selected = true;
-        }
-        return genre;
-      })
-    );
+    setSelectedGenres(new Set([...Array.from(selectedGenres), genreName]));
   };
 
   const removeGenre = (genreName) => {
-    setGenres(
-      genres.map((genre) => {
-        if (genre.name === genreName) {
-          genre.selected = false;
-        }
-        return genre;
-      })
-    );
+    const newSet = new Set(selectedGenres);
+    newSet.delete(genreName);
+    setSelectedGenres(newSet);
   };
 
   return (
@@ -113,6 +92,7 @@ export default function Home() {
       <Box mb={4}>
         <GenreList
           genres={genres}
+          selectedGenres={selectedGenres}
           addGenre={addGenre}
           removeGenre={removeGenre}
         />
