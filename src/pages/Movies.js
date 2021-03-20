@@ -18,6 +18,8 @@ import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import DeleteMovieConfirmationDialog from "../components/DeleteMovieConfirmationDialog";
 import Layout from "../components/Layout";
+import Toast from "../components/Toast";
+import useToast from "../hooks/useToast";
 
 const headCells = [
   { id: "name", label: "Name" },
@@ -62,6 +64,9 @@ export default function Movies() {
   const [movieToDelete, setMovieToDelete] = useState({});
   const [forceUpdate, setForceUpdate] = useState(0);
   const history = useHistory();
+  const [toastSeverity, setToastSeverity] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
+  const { isShowing, toggle } = useToast();
 
   useEffect(() => {
     const url = new URL(process.env.REACT_APP_BASE_URL + "/movie");
@@ -107,13 +112,17 @@ export default function Movies() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setShowDeleteDialog(false);
         setForceUpdate(forceUpdate + 1);
+        setToastSeverity("success");
+        setToastMessage(data.message);
+        toggle();
       })
       .catch((error) => {
-        console.error(error);
         setShowDeleteDialog(false);
+        setToastSeverity("error");
+        setToastMessage(error.message);
+        toggle();
       });
   };
 
@@ -211,6 +220,16 @@ export default function Movies() {
           movie={movieToDelete}
           deleteMovie={deleteMovie}
           closeDeleteDialog={closeDeleteDialog}
+        />
+      )}
+
+      {/* Toast */}
+      {isShowing && (
+        <Toast
+          severity={toastSeverity}
+          message={toastMessage}
+          isShowing={isShowing}
+          toggle={toggle}
         />
       )}
     </Layout>

@@ -9,7 +9,8 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import useToast from "../hooks/useToast";
+import Toast from "./Toast";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -31,14 +32,56 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AddEditMovie({
-  movie,
-  setMovie,
-  handleMovieSubmit,
-  operation,
-}) {
+export default function AddEditMovie({ movie: initialMovie, operation }) {
   const classes = useStyles();
   const [genres, setGenres] = useState([]);
+  const [movie, setMovie] = useState({
+    name: { value: initialMovie.name, error: "" },
+    director: { value: initialMovie.director, error: "" },
+    genres: { value: initialMovie.genres, error: "" },
+    popularity: { value: initialMovie["99popularity"], error: "" },
+  });
+  const [toastSeverity, setToastSeverity] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
+  const { isShowing, toggle } = useToast();
+
+  const handleMovieSubmit = async (event) => {
+    event.preventDefault();
+
+    let url = process.env.REACT_APP_BASE_URL + "/movie";
+    if (operation === "edit") url += "/" + initialMovie._id;
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          name: movie.name.value,
+          director: movie.director.value,
+          genres: movie.genres.value,
+          popularity: movie.popularity.value,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.status === 409) {
+        setToastSeverity("error");
+      } else {
+        setToastSeverity("success");
+      }
+
+      setToastMessage(data.message);
+      toggle();
+    } catch (error) {
+      setToastSeverity("error");
+      setToastMessage(error.message);
+      toggle();
+    }
+  };
 
   useEffect(() => {
     fetch(process.env.REACT_APP_BASE_URL + "/genre")
@@ -95,6 +138,7 @@ export default function AddEditMovie({
             helperText={movie.name.error}
             onChange={handleField}
             onBlur={handleField}
+            disabled={operation === "edit"}
           />
           <TextField
             variant="outlined"
@@ -115,6 +159,7 @@ export default function AddEditMovie({
             multiple
             id="genres"
             freeSolo
+            autoSelect
             value={movie.genres.value}
             onChange={handleGenreChange}
             options={genres}
@@ -126,8 +171,10 @@ export default function AddEditMovie({
             }
             renderInput={(params) => (
               <TextField
-                margin="normal"
                 {...params}
+                margin="normal"
+                error={Boolean(movie.genres.error)}
+                helperText={movie.genres.error}
                 label="Genres"
                 variant="outlined"
                 placeholder="Add genre"
@@ -158,9 +205,9 @@ export default function AddEditMovie({
             color="primary"
             className={classes.submit}
             disabled={Boolean(
-              movie.name.error &&
-                movie.director.error &&
-                movie.genres.error &&
+              movie.name.error ||
+                movie.director.error ||
+                movie.genres.error ||
                 movie.popularity.error
             )}
           >
@@ -168,6 +215,16 @@ export default function AddEditMovie({
           </Button>
         </form>
       </Container>
+
+      {/* Toast */}
+      {isShowing && (
+        <Toast
+          severity={toastSeverity}
+          message={toastMessage}
+          isShowing={isShowing}
+          toggle={toggle}
+        />
+      )}
     </>
   );
 }
