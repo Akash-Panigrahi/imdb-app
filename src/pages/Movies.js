@@ -19,6 +19,7 @@ import { Link as RouterLink, useHistory } from "react-router-dom";
 import DeleteMovieConfirmationDialog from "../components/DeleteMovieConfirmationDialog";
 import Layout from "../components/Layout";
 import Toast from "../components/Toast";
+import environment from "../environments";
 import useToast from "../hooks/useToast";
 
 const headCells = [
@@ -69,7 +70,7 @@ export default function Movies() {
   const { isShowing, toggle } = useToast();
 
   useEffect(() => {
-    const url = new URL(process.env.REACT_APP_BASE_URL + "/movie");
+    const url = new URL(environment.baseUrl + "/movie");
     const reqData = {
       start: page * 20,
       length: rowsPerPage,
@@ -104,7 +105,7 @@ export default function Movies() {
   };
 
   const deleteMovie = (movie) => {
-    fetch(process.env.REACT_APP_BASE_URL + "/movie/" + movie._id, {
+    fetch(environment.baseUrl + "/movie/" + movie._id, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,

@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import Layout from "../components/Layout";
 import Toast from "../components/Toast";
+import environment from "../environments";
 import useToast from "../hooks/useToast";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +48,7 @@ export default function Login() {
     event.preventDefault();
 
     try {
-      const res = await fetch(process.env.REACT_APP_BASE_URL + "/auth/login", {
+      const res = await fetch(environment.baseUrl + "/auth/login", {
         method: "POST",
         body: JSON.stringify({
           email: loginForm.email.value,

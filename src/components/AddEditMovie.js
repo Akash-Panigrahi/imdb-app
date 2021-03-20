@@ -9,6 +9,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
+import environment from "../environments";
 import useToast from "../hooks/useToast";
 import Toast from "./Toast";
 
@@ -48,7 +49,7 @@ export default function AddEditMovie({ movie: initialMovie, operation }) {
   const handleMovieSubmit = async (event) => {
     event.preventDefault();
 
-    let url = process.env.REACT_APP_BASE_URL + "/movie";
+    let url = environment.baseUrl + "/movie";
     if (operation === "edit") url += "/" + initialMovie._id;
 
     try {
@@ -84,7 +85,7 @@ export default function AddEditMovie({ movie: initialMovie, operation }) {
   };
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_BASE_URL + "/genre")
+    fetch(environment.baseUrl + "/genre")
       .then((res) => res.json())
       .then((data) => setGenres(data.map((genre) => genre.name)));
   }, []);

@@ -6,6 +6,7 @@ import Layout from "../components/Layout";
 import MovieList from "../components/MovieList";
 import Search from "../components/Search";
 import SortFilter from "../components/SortFilter";
+import environment from "../environments";
 
 export default function Home() {
   const [movies, setMovies] = useState([]);
@@ -17,7 +18,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_BASE_URL + "/genre")
+    fetch(environment.baseUrl + "/genre")
       .then((res) => res.json())
       .then((data) =>
         setGenres(
@@ -30,7 +31,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const url = new URL(process.env.REACT_APP_BASE_URL + "/movie");
+    const url = new URL(environment.baseUrl + "/movie");
     const reqData = {
       start: (page - 1) * 20,
       sortBy,
